@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Service
+  postgres_db:
+    image: postgres:14
+    container_name: postgres_db
+    restart: always
+    env_file: .env  # Charge les variables d'environnement depuis .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  # MongoDB Service
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo_db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - backend
+
+  # Backend FastAPI Service
+  backend:
+    build:
+      context: .
+    container_name: backend
+    restart: always
+    env_file: .env  # Charge aussi les variables pour le backend
+    ports:
+      - "8000:8000"  # Port exposé pour FastAPI
+    depends_on:
+      - postgres_db
+      - mongo_db
+    networks:
+      - backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+
+volumes:
+  postgres_data:
+  mongo_data:
+
+networks:
+  backend:
+    driver: bridge
