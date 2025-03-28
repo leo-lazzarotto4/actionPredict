@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from app.database import get_db, engine
 from app.models import StockData
 from app.schemas import DateRangeRequest
+import uvicorn
+
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -56,5 +58,5 @@ def get_data_between_dates(date_range: DateRangeRequest, db: Session = Depends(g
 
 # 🚀 Lancement du serveur
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))  
+    uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
