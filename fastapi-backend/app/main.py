@@ -1,5 +1,4 @@
 import os  # Assure-toi d'importer os
-
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import users, auth
